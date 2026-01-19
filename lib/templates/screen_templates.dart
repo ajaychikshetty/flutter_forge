@@ -162,7 +162,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Conditional localization imports
     final localizationImports = includeLocalization
         ? '''
-import 'package:provider/provider.dart' as provider_pkg;
 import '../../../core/providers/locale_provider.dart';
 import '../../../l10n/app_localizations.dart';'''
         : '';
@@ -343,6 +342,7 @@ String _nativeLanguageName(String code) {
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+  import 'package:provider/provider.dart' as provider_pkg;
 import '../../../shared/widgets/widgets.dart';
 import '../../../core/services/feature_service.dart';
 import '../../../core/modules/camera/camera_service.dart';
@@ -351,6 +351,7 @@ import '../../../core/modules/contacts/phone_contacts_service.dart';
 import '../../../core/modules/contacts/contact.dart';
 import '../../../core/modules/location/location_service.dart';
 import 'package:geolocator/geolocator.dart';$localizationImports
+  import '../../../core/providers/theme_mode_provider.dart';
 $chatbotImports
 
 $languageHelperFunction
@@ -377,6 +378,18 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(
         title: ${_getText('appTitle', 'Test App')},
         actions: [
+          IconButton(
+            tooltip: 'Toggle Theme',
+            onPressed: () {
+              provider_pkg.Provider.of<ThemeModeProvider>(context, listen: false)
+                  .toggleTheme();
+            },
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+          ),
           $localizationButton
           const SizedBox(width: 4),
         ],

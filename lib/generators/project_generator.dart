@@ -19,6 +19,7 @@ import 'package:appforge_cli/templates/modules_template.dart'
     show ModulesTemplate;
 import 'package:appforge_cli/templates/pubspec_template.dart';
 import 'package:appforge_cli/templates/theme_template.dart';
+import 'package:appforge_cli/templates/theme_mode_provider_template.dart';
 import 'package:appforge_cli/templates/screen_templates.dart';
 import 'package:appforge_cli/utils/file_utils.dart';
 import 'package:appforge_cli/templates/app_readme_template.dart';
@@ -154,6 +155,10 @@ class ProjectGenerator {
       // Step 4: Generate theme
       await _generateTheme();
       progress.update('Generating theme');
+
+      // Step 4b: Generate ThemeMode provider
+      await _generateThemeModeProvider();
+      progress.update('Adding theme mode provider');
 
       // Step 5: Generate reusable widgets
       await _generateEnhancedReusableWidgets();
@@ -754,6 +759,16 @@ export 'dialogs/confirm_dialog.dart';
     await FileUtils.writeFile(themePath, content);
     logger
         .detail('Generated theme at $themePath with $themeColor color scheme');
+  }
+
+  Future<void> _generateThemeModeProvider() async {
+    final providerPath =
+        path.join(projectName, 'lib', 'core', 'providers', 'theme_mode_provider.dart');
+    await Directory(path.dirname(providerPath)).create(recursive: true);
+
+    final content = ThemeModeProviderTemplate.generate();
+    await FileUtils.writeFile(providerPath, content);
+    logger.detail('Generated ThemeModeProvider at $providerPath');
   }
 
   Future<void> _generateFirebaseOperations() async {

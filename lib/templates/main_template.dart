@@ -24,10 +24,15 @@ import 'package:$projectName/core/services/feature_service.dart';
     final localizationImports = includeLocalization
         ? '''
 import 'package:$projectName/l10n/app_localizations.dart';
-import 'package:provider/provider.dart' as provider_pkg;
 import 'package:$projectName/core/providers/locale_provider.dart';
 '''
         : '';
+
+    // Theme provider imports (always include)
+    final themeProviderImports = '''
+  import 'package:provider/provider.dart' as provider_pkg;
+  import 'package:$projectName/core/providers/theme_mode_provider.dart';
+  ''';
 
     // --- Firebase init code in main() ---
     final firebaseInit = includeFirebase
@@ -69,10 +74,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
   runApp(
     ProviderScope(
-      child: provider_pkg.ChangeNotifierProvider(
-        create: (_) => LocaleProvider(),
+      child: provider_pkg.MultiProvider(
+        providers: [
+          provider_pkg.ChangeNotifierProvider(create: (_) => LocaleProvider()),
+          provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(value: themeProvider),
+        ],
         child: const MyApp(),
       ),
     ),
@@ -86,13 +96,14 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localeProvider = provider_pkg.Provider.of<LocaleProvider>(context);
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
 
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
 $localizationSupport
       routerConfig: appRouter,
     );
@@ -108,7 +119,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
-  runApp(const ProviderScope(child: MyApp()));
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
+  runApp(
+    ProviderScope(
+      child: provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(
+        value: themeProvider,
+        child: const MyApp(),
+      ),
+    ),
+  );
 }
 ''';
           appWidget = '''
@@ -117,12 +137,13 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: appRouter,
     );
   }
@@ -140,9 +161,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => LocaleProvider(),
+    provider_pkg.MultiProvider(
+      providers: [
+        provider_pkg.ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(value: themeProvider),
+      ],
       child: const MyApp(),
     ),
   );
@@ -155,13 +181,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
 
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
 $localizationSupport
       routerConfig: appRouter,
     );
@@ -176,7 +203,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
-  runApp(const MyApp());
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
+  runApp(
+    provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(
+      value: themeProvider,
+      child: const MyApp(),
+    ),
+  );
 }
 ''';
           appWidget = '''
@@ -185,12 +219,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: appRouter,
     );
   }
@@ -209,9 +244,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => LocaleProvider(),
+    provider_pkg.MultiProvider(
+      providers: [
+        provider_pkg.ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(value: themeProvider),
+      ],
       child: const MyApp(),
     ),
   );
@@ -224,13 +264,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
 
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
 $localizationSupport
       routerConfig: appRouter,
     );
@@ -245,7 +286,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
-  runApp(const MyApp());
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
+  runApp(
+    provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(
+      value: themeProvider,
+      child: const MyApp(),
+    ),
+  );
 }
 ''';
           appWidget = '''
@@ -254,12 +302,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: appRouter,
     );
   }
@@ -277,9 +326,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => LocaleProvider(),
+    provider_pkg.MultiProvider(
+      providers: [
+        provider_pkg.ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(value: themeProvider),
+      ],
       child: const MyApp(),
     ),
   );
@@ -292,13 +346,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localeProvider = Provider.of<LocaleProvider>(context);
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
 
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
 $localizationSupport
       routerConfig: appRouter,
     );
@@ -311,7 +366,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 $firebaseInit
 $featureServiceInit
-  runApp(const MyApp());
+  final themeProvider = ThemeModeProvider();
+  await themeProvider.load();
+  runApp(
+    provider_pkg.ChangeNotifierProvider<ThemeModeProvider>.value(
+      value: themeProvider,
+      child: const MyApp(),
+    ),
+  );
 }
 ''';
           appWidget = '''
@@ -320,12 +382,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = provider_pkg.Provider.of<ThemeModeProvider>(context).mode;
     return MaterialApp.router(
       title: 'Flutter App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       routerConfig: appRouter,
     );
   }
@@ -338,7 +401,7 @@ class MyApp extends StatelessWidget {
 import 'package:flutter/material.dart';
 import 'package:$projectName/app/theme/app_theme.dart';
 import 'package:$projectName/app/router/app_router.dart';
-$firebaseImports$localizationImports$featureServiceImports
+$firebaseImports$themeProviderImports$localizationImports$featureServiceImports
 $stateManagementSetup
 
 $appWidget
